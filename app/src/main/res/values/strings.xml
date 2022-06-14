@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Bingo!</string>
+
+    <string-array name="bingo">
+        <item>B</item>
+        <item>I</item>
+        <item>N</item>
+        <item>G</item>
+        <item>O</item>
+    </string-array>
+</resources>
