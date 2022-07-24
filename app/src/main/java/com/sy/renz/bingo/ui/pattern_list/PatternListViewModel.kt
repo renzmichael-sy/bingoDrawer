@@ -1,21 +1,17 @@
 package com.sy.renz.bingo.ui.pattern_list
 
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.lifecycle.SavedStateHandle
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavArgument
 import com.sy.renz.bingo.data.BingoRepository
-import com.sy.renz.bingo.data.CompletePatternData
 import com.sy.renz.bingo.data.Pattern
 import com.sy.renz.bingo.util.Routes
 import com.sy.renz.bingo.util.UiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -28,23 +24,38 @@ class PatternListViewModel @Inject constructor(
 
     private val _uiEvent = Channel<UiEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
-    var patternList : Flow<List<CompletePatternData>> = bingoRepository.getCompletePatternData()
+    var patternList : Flow<List<Pattern>> = bingoRepository.getPattern()
+
+    var selectedPattern by mutableStateOf<Pattern?>(null)
+        private set
+
 
     fun onEvent(event: PatternListScreenEvent){
         when(event){
             is PatternListScreenEvent.PatternItemEdit -> {
-                println("PATTERN EDIT OPEN")
-                sendUIEvent(UiEvent.Navigate(Routes.ADD_EDIT_PATTERN + "?patternId=${event.patternData?.id}"))
+                println("PATTERN EDIT OPEN " + event.patternId)
+                sendUIEvent(UiEvent.Navigate(Routes.ADD_EDIT_PATTERN + "?patternId=${event.patternId}"))
             }
             is PatternListScreenEvent.PatternListClosed -> {
                 sendUIEvent(UiEvent.PopBackStack)
             }
             is PatternListScreenEvent.PatternItemDelete -> {
                 viewModelScope.launch {
-                    bingoRepository.deletePatternData(event.patternData)
+                    bingoRepository.deletePattern(event.pattern)
                 }
             }
-            else -> {
+            is PatternListScreenEvent.PatternSelected -> {
+                println("PATTERN SELECTED")
+                selectedPattern = event.pattern
+            }
+            is PatternListScreenEvent.PatternFavorite -> {
+                viewModelScope.launch {
+                    bingoRepository.insertPattern(
+                        event.pattern.copy(
+                            isFavorite = event.isFavorite
+                        )
+                    )
+                }
 
             }
         }

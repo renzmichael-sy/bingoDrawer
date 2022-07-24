@@ -1,17 +1,22 @@
 package com.sy.renz.bingo.ui
 
+import android.graphics.Color
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.SnackbarDefaults.backgroundColor
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.sy.renz.bingo.ui.theme.background1
-import com.sy.renz.bingo.ui.theme.colorList
-import com.sy.renz.bingo.ui.theme.darkFont
-import com.sy.renz.bingo.ui.theme.fredoka
+import androidx.compose.ui.window.DialogProperties
+import com.sy.renz.bingo.ui.theme.*
 import kotlin.random.Random
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun CustomAlertDialog (
     title: String,
@@ -24,16 +29,25 @@ fun CustomAlertDialog (
     androidx.compose.material.AlertDialog(
         backgroundColor = background1,
         contentColor = darkFont,
-        shape = RoundedCornerShape(20.dp),
+//        shape = RoundedCornerShape(percent = 10),
         onDismissRequest = onDismiss,
+        modifier = Modifier.padding(16.dp),
+        properties = DialogProperties(dismissOnClickOutside = false, usePlatformDefaultWidth = true),
+
         confirmButton = {
-            TextButton(onClick = onConfirm) {
-                Text(text = positiveString)
+            TextButton(
+                modifier = Modifier.background(color = color_G, shape = RoundedCornerShape(percent = 30)),
+                onClick = onConfirm
+            ) {
+                Text(color = androidx.compose.ui.graphics.Color.White, text = positiveString)
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text(text = negativeString)
+            TextButton(
+                modifier = Modifier.background(color = color_B, shape = RoundedCornerShape(percent = 30)),
+                onClick = onDismiss
+            ) {
+                Text(color = androidx.compose.ui.graphics.Color.White, text = negativeString)
             }
         },
         title = {

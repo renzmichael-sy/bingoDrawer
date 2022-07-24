@@ -10,4 +10,6 @@ import javax.inject.Inject
 class HistoryViewModel @Inject constructor(
     private val repository: BingoRepository,
     savedStateHandle: SavedStateHandle
-): ViewModel()
+): ViewModel() {
+    val history = savedStateHandle.get<List<String>>("history")
+}

@@ -4,7 +4,10 @@ import kotlinx.coroutines.flow.Flow
 
 class BingoRepositoryImpl(
     private val dao: PatternDao,
-    private val patternDataDao: PatternDataDao
+    private val bingoDataPatternsDao: BingoDataPatternsDao,
+    private val bingoDataDao: BingoDataDao,
+    private val defaultSettingsDao: SettingsDao
+//    private val bingoDataSettingsDao: BingoDataSettingsDao
 ): BingoRepository {
 
     override suspend fun insertPattern(pattern: Pattern) {
@@ -23,20 +26,43 @@ class BingoRepositoryImpl(
         return dao.getPattern()
     }
 
-    override suspend fun insertPatternData(patternData: PatternData) {
-        patternDataDao.insertPatternData(patternData)
+    override suspend fun insertBingoData(bingoData: BingoData): Long {
+        return bingoDataDao.insertData(bingoData)
     }
 
-    override suspend fun deletePatternData(patternData: PatternData) {
-        patternDataDao.deletePatternData(patternData)
+    override suspend fun getLatestBingoData(): BingoDataAndPattern? {
+        return bingoDataDao.getData()
     }
 
-    override suspend fun getPatternDataById(id: Int): CompletePatternData? {
-        return patternDataDao.getPatternDataById(id)
+    override suspend fun insertBingoDataPattern(bingoDataPatterns: BingoDataPatterns) {
+        bingoDataPatternsDao.insertBingoDataPattern(bingoDataPatterns)
     }
 
-    override fun getCompletePatternData(): Flow<List<CompletePatternData>> {
-        return patternDataDao.getCompletePatternData()
+    override suspend fun deleteBingoDataPattern(bingoDataPatterns: BingoDataPatterns) {
+        TODO("Not yet implemented")
     }
 
+    override suspend fun getDataWithId(id: Int): BingoDataPatterns? {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getPatterns(id: Int): List<BingoDataPatterns>? {
+        TODO("Not yet implemented")
+    }
+
+    override fun getData(id: Long): BingoDataAndPattern {
+        return bingoDataPatternsDao.getData(id)
+    }
+
+    override suspend fun getDefaultSettings(): Settings {
+        return defaultSettingsDao.getDefaultSettings()
+    }
+
+    override suspend fun getSettings(id: Long): Settings {
+        return defaultSettingsDao.getSettingsById(id)
+    }
+
+    override suspend fun insertSettings(defaultSettings: Settings): Long {
+        return defaultSettingsDao.insertDefaultSettings(defaultSettings)
+    }
 }

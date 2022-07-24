@@ -1,4 +1,4 @@
-package com.sy.renz.bingo.pattern_add_edit
+package com.sy.renz.bingo.ui.pattern_add_edit
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -6,11 +6,8 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.sy.renz.bingo.data.BingoRepository
-import com.sy.renz.bingo.data.CompletePatternData
 import com.sy.renz.bingo.data.Pattern
-import com.sy.renz.bingo.data.PatternData
 import com.sy.renz.bingo.util.UiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -27,31 +24,28 @@ class PatternAddEditViewModel @Inject constructor(
     private val _uiEvent = Channel<UiEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
 
-    var completePatternData by mutableStateOf<CompletePatternData?>(null)
-        private set
-
-    var patternData by mutableStateOf<PatternData?>(null)
-        private set
-
     var patternName by mutableStateOf("")
         private set
 
-    var pattern by mutableStateOf<Pattern?>(null)
+    private var patternData by mutableStateOf<Pattern?>(null)
+
+    var patternString by mutableStateOf(List(25){"0"}.joinToString(","))
         private set
 
-    var patternString by mutableStateOf("")
+    var patternFavorite by mutableStateOf(0)
         private set
 
     init {
         val patternId =  savedStateHandle.get<Int>("patternId")!!
+        println("SAVED STATE HANDLE ID $patternId")
         if(patternId != -1) {
             viewModelScope.launch {
-                bingoRepository.getPatternDataById(patternId)?.let { completeData ->
-                    patternData = completeData.patternData
-                    patternName = completeData.patternData.name.toString()
-                    pattern = completeData.patterns.get(0)
-                    patternString = completeData.patterns[0].pattern
-                    this@PatternAddEditViewModel.completePatternData = completeData
+                bingoRepository.getPatternById(patternId)?.let { result ->
+                    patternName = result.name
+                    patternString = result.pattern
+                    patternFavorite = result.isFavorite
+                    println("PATTERN STRING: " + patternString)
+                    this@PatternAddEditViewModel.patternData = result
                 }
 
             }
@@ -61,23 +55,50 @@ class PatternAddEditViewModel @Inject constructor(
     fun onEvent(event: PatternAddEditEvent) {
         when(event) {
             is PatternAddEditEvent.PatternEdited -> {
-
+                val list = patternString.split(",").toMutableList()
+                list[event.index] = if(list[event.index] == "1") "0" else "1"
+                println("NED STRING ${list.toString()}")
+                patternString = list.joinToString(",")
             }
 
             is PatternAddEditEvent.OnNameChange -> {
                 patternName = event.name
             }
 
+            is PatternAddEditEvent.OnFavoriteClick -> {
+                patternFavorite = if(patternFavorite == 1) 0 else 1
+            }
+
             is PatternAddEditEvent.OnSavePatternClick -> {
+                println("SAVING PATTERN")
                 viewModelScope.launch {
-                    if(patternName.isNotBlank()) {
+                    if(patternName.isBlank()) {
                         sendUIEvent(UiEvent.ShowSnackBar(
                             message = "The name cannot be empty"
                         ))
                         return@launch
                     }
-//                    bingoRepository.insertPatternData()
+                    bingoRepository.insertPattern(
+                        Pattern(
+                            name = patternName,
+                            description = "",
+                            pattern = patternString,
+                            isFavorite = patternData?.isFavorite ?: 0,
+                            isCustom =  1,
+                            patternId = if(patternData != null) patternData?.patternId!! else null
+//                            patternId = if(patternData != null) patternData?.patternId else null
+                        )
+                    )
+                    sendUIEvent(UiEvent.PopBackStack)
                 }
+            }
+
+            is PatternAddEditEvent.OnDeleteClick -> {
+
+            }
+
+            is PatternAddEditEvent.OnToggle -> {
+                patternString = List(25) {if(event.toggle) "1" else "0"}.joinToString(",")
             }
         }
     }

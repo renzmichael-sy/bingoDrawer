@@ -12,7 +12,7 @@ interface PatternDao {
     @Delete
     suspend fun deletePattern(pattern: Pattern)
 
-    @Query("SELECT * FROM pattern where id = :id")
+    @Query("SELECT * FROM pattern where patternId = :id")
     suspend fun getPatternById(id: Int): Pattern?
 
     @Query("SELECT * FROM pattern")

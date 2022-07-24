@@ -1,6 +1,7 @@
 package com.sy.renz.bingo.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material.Colors
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
@@ -17,7 +18,7 @@ private val LightColorPalette = lightColors(
     primaryVariant = color_N,
     secondary = color_O
 
-    /* Other default colors to override
+    /* Other default colors to override0
     background = Color.White,
     surface = Color.White,
     onPrimary = Color.White,

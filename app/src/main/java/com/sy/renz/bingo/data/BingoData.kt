@@ -1,24 +1,27 @@
 package com.sy.renz.bingo.data
 
-import kotlinx.coroutines.flow.*
-import javax.inject.Singleton
-import kotlin.random.Random
-import kotlin.random.nextInt
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.ForeignKey
+import androidx.room.PrimaryKey
+import org.jetbrains.annotations.NotNull
+import org.jetbrains.annotations.Nullable
 
-class BingoData {
-    var drawList: MutableStateFlow<List<Int>> = MutableStateFlow(generateSequence {
-        // this lambda is the source of the sequence's values
-        Random.nextInt(1..75)
-    }
-        .distinct()
-        .take(75)
-        .toList())
-    val list = drawList.asSharedFlow()
+@Entity(tableName = "BingoData")
+data class BingoData (
+    @PrimaryKey(autoGenerate = true) val bingoDataId: Long? = null,
 
-    private val _index: MutableStateFlow<Int> = MutableStateFlow(-1)
-    val index = _index.asSharedFlow()
+    @NotNull
+    var drawList: String,
 
-    fun next() {
-        _index.update { index -> index + 1 }
-    }
-}
+    @ColumnInfo(name = "index", defaultValue = "-1")
+    var index: Int = -1,
+
+    @Nullable
+    @ColumnInfo(name = "customPattern")
+    var customPattern: String = "",
+
+    val settingsId: Long
+
+
+    )

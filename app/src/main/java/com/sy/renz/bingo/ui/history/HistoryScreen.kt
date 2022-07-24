@@ -2,9 +2,7 @@ package com.sy.renz.bingo.ui.history
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
@@ -37,12 +35,12 @@ import kotlinx.coroutines.flow.collect
 fun HistoryScreen(
     onNavigate: (UiEvent.Navigate) -> Unit,
     onPopBackStack: () -> Unit,
-    viewModel: MainViewModel = hiltViewModel()
+    viewModel: MainViewModel
 ) {
-    val currIndex = viewModel.bingoDataSource.index.collectAsState(0)
-    val callList = viewModel.bingoDataSource.list.collectAsState(initial = emptyList())
-    val history = if(callList.value.isNotEmpty())callList.value.subList(0, currIndex.value + 1) else emptyList()
-
+    val callList = viewModel.callList.split(",").map{ it.toInt() }
+    val history = callList.subList(0, viewModel.index + 1)
+    println("HISTORY ${viewModel.index}")
+    println("HISTORY ${viewModel.callList}")
     LaunchedEffect(key1 = true) {
         viewModel.uiEvent.collect{ event ->
             when(event) {
