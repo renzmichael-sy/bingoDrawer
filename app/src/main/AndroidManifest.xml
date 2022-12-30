@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Bingo">
         <activity
-            android:name=".ui.main_activity.MainActivity"
+            android:name=".presentation.ui.main_activity.MainActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.Bingo">

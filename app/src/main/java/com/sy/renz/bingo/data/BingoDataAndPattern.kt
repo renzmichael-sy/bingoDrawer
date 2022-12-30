@@ -3,14 +3,14 @@ package com.sy.renz.bingo.data
 import androidx.room.*
 
 data class BingoDataAndPattern (
-    @Embedded val bingoData: BingoData,
+    @Embedded val bingoData: BingoData? = null,
 
     @Relation(
         parentColumn = "bingoDataId",
         entityColumn = "patternId",
         associateBy = Junction(BingoDataPatterns::class)
     )
-    val patterns: List<Pattern>,
+    val pattern: Pattern? = null,
 
 
     @Relation(
@@ -18,6 +18,6 @@ data class BingoDataAndPattern (
         entityColumn = "id"
     )
 
-    val settings: Settings
+    val settings: Settings? = null
 
 )

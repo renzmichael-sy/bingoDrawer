@@ -11,13 +11,11 @@ import org.jetbrains.annotations.Nullable
 data class BingoData (
     @PrimaryKey(autoGenerate = true) val bingoDataId: Long? = null,
 
-    @NotNull
     var drawList: String,
 
     @ColumnInfo(name = "index", defaultValue = "-1")
     var index: Int = -1,
 
-    @Nullable
     @ColumnInfo(name = "customPattern")
     var customPattern: String = "",
 

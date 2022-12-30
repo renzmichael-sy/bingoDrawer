@@ -15,8 +15,8 @@ data class Settings (
     @ColumnInfo(name = "timer", defaultValue = "3.0")
     var timer: Double = 3.0,
 
-    @ColumnInfo(name = "callType", defaultValue = "1")
-    var callType: Int = 1,
+    @ColumnInfo(name = "callType", defaultValue = "0")
+    var callType: Int = 0,
 
     @ColumnInfo(name = "announcerId")
     var announcerId: Long? = null,

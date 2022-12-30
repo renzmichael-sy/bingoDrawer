@@ -32,4 +32,5 @@ object AppModule {
     fun providesBingoRepository(db: BingoDatabase): BingoRepository{
         return BingoRepositoryImpl(db.dao, db.bingoDataPatternsDao, db.bingoDataDao, db.defaultSettingsDao)
     }
+    
 }
