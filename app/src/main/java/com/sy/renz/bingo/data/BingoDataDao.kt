@@ -1,6 +1,7 @@
 package com.sy.renz.bingo.data
 
 import androidx.room.*
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface BingoDataDao {
@@ -16,9 +17,9 @@ interface BingoDataDao {
 
     @Transaction
     @Query("SELECT * FROM BingoData ORDER BY bingoDataId desc LIMIT 1")
-    suspend fun getData(): BingoDataAndPattern?
+    fun getData(): Flow<BingoDataAndPattern>
 
-    @Transaction
-    @Query("SELECT * FROM BingoData ORDER BY bingoDataId desc LIMIT 1")
-    suspend fun getBingoDataAndSettings(): BingoDataAndSettings
+//    @Transaction
+//    @Query("SELECT * FROM BingoData ORDER BY bingoDataId desc LIMIT 1")
+//    suspend fun getBingoDataAndSettings(): BingoDataAndSettings
 }

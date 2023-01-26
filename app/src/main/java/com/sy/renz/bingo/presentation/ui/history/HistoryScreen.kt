@@ -1,6 +1,5 @@
 package com.sy.renz.bingo.presentation.ui.history
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -13,8 +12,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.sy.renz.bingo.presentation.ui.main_activity.MainActivityEvent
-import com.sy.renz.bingo.presentation.ui.main_bingo.MainViewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.sy.renz.bingo.presentation.ui.theme.background1
 import com.sy.renz.bingo.presentation.ui.theme.darkFont
 import com.sy.renz.bingo.presentation.ui.theme.fredoka
@@ -24,12 +22,12 @@ import com.sy.renz.bingo.util.UiEvent
 fun HistoryScreen(
     onNavigate: (UiEvent.Navigate) -> Unit,
     onPopBackStack: () -> Unit,
-    viewModel: MainViewModel
+    viewModel: HistoryViewModel = hiltViewModel()
 ) {
-    val callList = viewModel.state.value.callList
-    val history = callList.subList(0, viewModel.state.value.index + 1)
-//    println("HISTORY ${viewModel.index}")
-//    println("HISTORY ${viewModel.callList}")
+    val drawList = viewModel.bingoDataAndPattern.value.bingoData.drawList
+    val callList: List<Int> = if(drawList != "") drawList.split(",").map{it.toInt()} else emptyList()
+    val history = callList.subList(0, viewModel.bingoDataAndPattern.value.bingoData.index + 1)
+
     LaunchedEffect(key1 = true) {
         viewModel.uiEvent.collect{ event ->
             when(event) {
@@ -60,16 +58,14 @@ fun HistoryScreen(
                         text = "Call History", fontFamily = fredoka)
                 },
                 navigationIcon = {
-                    IconButton(onClick = { viewModel.onEvent(MainActivityEvent.HistoryClose) }) {
+                    IconButton(onClick = { viewModel.onEvent(HistoryScreenEvent.Close) }) {
                         Icon(Icons.Filled.ArrowBack, "backIcon")
                     }
                 }
             )
         },
         content = {
-            if (history != null) {
-                MyLazyColumn(history = history, modifier = Modifier.padding(it))
-            }
+            MyLazyColumn(history = history, modifier = Modifier.padding(it))
         }
     ) 
 }

@@ -4,11 +4,13 @@ import com.sy.renz.bingo.data.BingoRepository
 import com.sy.renz.bingo.data.Settings
 import javax.inject.Inject
 
-class InsertSettingsUseCase @Inject constructor(
+class GetSettingsUseCase @Inject constructor(
     private val repository: BingoRepository
 ) {
 
-    suspend operator fun invoke(settings: Settings): Long{
-        return repository.insertSettings(settings)
+    suspend operator fun invoke(): Settings{
+        repository.getLatestSettings().let {
+            return it
+        }
     }
 }

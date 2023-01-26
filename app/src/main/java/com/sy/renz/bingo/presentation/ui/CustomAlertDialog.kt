@@ -27,7 +27,7 @@ fun CustomAlertDialog (
     androidx.compose.material.AlertDialog(
         backgroundColor = background1,
         contentColor = darkFont,
-//        shape = RoundedCornerShape(percent = 10),
+        shape = RoundedCornerShape(percent = 10),
         onDismissRequest = onDismiss,
         modifier = Modifier.padding(16.dp),
         properties = DialogProperties(dismissOnClickOutside = false, usePlatformDefaultWidth = true),

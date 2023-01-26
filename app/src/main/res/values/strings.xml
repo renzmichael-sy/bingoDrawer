@@ -1,5 +1,25 @@
 <resources>
     <string name="app_name">Bingo!</string>
+    <string name="restart_confirmation">Are you sure you want to restart?</string>
+    <string name="warning">Warning</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="call_settings">Call Settings</string>
+    <string name="call_type">Call Type</string>
+    <string name="continuous">Continuous</string>
+    <string name="intermittent">Intermittent</string>
+    <string name="call_timer">Call Timer</string>
+    <string name="minus">-</string>
+    <string name="plus">+</string>
+    <string name="call_balls_from">Call Balls From</string>
+    <string name="announcer_settings">Announcer Settings</string>
+    <string name="ADMOB_APP_ID">ca-app-pub-5641019517069386~2573158023</string>
+    <string name="ad_id_banner">ca-app-pub-5641019517069386~2573158023</string>
+    <string name="free">FREE</string>
+    <string name="edit_pattern">Edit Pattern</string>
+    <string name="add_new_pattern">Add New Pattern</string>
+    <string name="save">Save</string>
+    <string name="pattern_name">Pattern Name</string>
 
     <string-array name="bingo">
         <item>B</item>

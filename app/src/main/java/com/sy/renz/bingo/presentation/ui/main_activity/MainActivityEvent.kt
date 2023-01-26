@@ -6,7 +6,7 @@ sealed class MainActivityEvent{
     object NextBall: MainActivityEvent()
     object SettingsClick: MainActivityEvent()
     object HistoryClick: MainActivityEvent()
-    object HistoryClose: MainActivityEvent()
+//    object HistoryClose: MainActivityEvent()
     object RestartClick: MainActivityEvent()
     object PatternListClick: MainActivityEvent()
     data class PatternSelected(val pattern: Pattern, val customPattern: String?): MainActivityEvent()

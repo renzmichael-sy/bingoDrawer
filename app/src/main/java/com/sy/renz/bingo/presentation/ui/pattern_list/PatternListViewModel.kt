@@ -33,7 +33,6 @@ class PatternListViewModel @Inject constructor(
     fun onEvent(event: PatternListScreenEvent){
         when(event){
             is PatternListScreenEvent.PatternItemEdit -> {
-                println("PATTERN EDIT OPEN " + event.patternId)
                 sendUIEvent(UiEvent.Navigate(Routes.ADD_EDIT_PATTERN + "?patternId=${event.patternId}"))
             }
             is PatternListScreenEvent.PatternListClosed -> {
@@ -45,7 +44,6 @@ class PatternListViewModel @Inject constructor(
                 }
             }
             is PatternListScreenEvent.PatternSelected -> {
-                println("PATTERN SELECTED")
                 selectedPattern = event.pattern
             }
             is PatternListScreenEvent.PatternFavorite -> {

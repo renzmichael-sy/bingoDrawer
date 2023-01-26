@@ -1,8 +1,5 @@
 package com.sy.renz.bingo
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.ReadOnlyComposable
-
 object BingoTheme {
 //    val colors: AppColors
 //        @Composable

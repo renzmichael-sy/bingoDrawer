@@ -4,7 +4,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.ui.unit.IntOffset
@@ -14,9 +13,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.google.android.gms.ads.MobileAds
 import com.sy.renz.bingo.presentation.ui.history.HistoryScreen
 import com.sy.renz.bingo.presentation.ui.main_bingo.MainBingoScreen
 import com.sy.renz.bingo.presentation.ui.main_bingo.MainViewModel
+import com.sy.renz.bingo.presentation.ui.pattern_add_edit.PatternAddEditScreen
 import com.sy.renz.bingo.presentation.ui.pattern_list.PatternListScreen
 import com.sy.renz.bingo.presentation.ui.settings_screen.SettingsScreen
 import com.sy.renz.bingo.presentation.ui.splash_screen.SplashScreen
@@ -52,21 +53,20 @@ class MainActivity : ComponentActivity() {
                         MainBingoScreen(
                         onNavigate = {
                             navController.navigate(it.route)
-                        },
-                        viewModel
+                        }
                     )
                     }
-//                    composable(
-//                        route = Routes.ADD_EDIT_PATTERN + "?patternId={patternId}",
-//                        arguments = listOf(navArgument("patternId") {
-//                            type = NavType.IntType
-//                            defaultValue = -1
-//                        })
-//                    ){
-//                        PatternAddEditScreen(onPopBackStack = {
-//                            navController.popBackStack()
-//                        })
-//                    }
+                    composable(
+                        route = Routes.ADD_EDIT_PATTERN + "?patternId={patternId}",
+                        arguments = listOf(navArgument("patternId") {
+                            type = NavType.IntType
+                            defaultValue = -1
+                        })
+                    ){
+                        PatternAddEditScreen(onPopBackStack = {
+                            navController.popBackStack()
+                        })
+                    }
                     composable(
                         Routes.HISTORY
 //                        enterTransition = { initial, _ ->
@@ -88,8 +88,7 @@ class MainActivity : ComponentActivity() {
                             },
                             onPopBackStack = {
                                 navController.popBackStack()
-                            },
-                            viewModel
+                            }
                         )
                     }
                     composable(Routes.PATTERN_LIST){
@@ -105,14 +104,16 @@ class MainActivity : ComponentActivity() {
                     }
 
                     composable(
-                        route =Routes.SETTINGS + "?settingsId={settingsId}",
-                        arguments = listOf(navArgument("settingsId"){
-                            type = NavType.LongType
-                            defaultValue = -1
-                        })
+                        route =Routes.SETTINGS + "?bingoDataId={bingoDataId}",
+                        arguments = listOf(
+                            navArgument("bingoDataId")
+                            {
+                                type = NavType.LongType
+                                defaultValue = -1
+                            }
+                        )
                         ) {
                         SettingsScreen(
-                            viewModel,
                             onPopBackStack = {
                             navController.popBackStack()
                         })
@@ -120,5 +121,7 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+
+        MobileAds.initialize(this)
     }
 }

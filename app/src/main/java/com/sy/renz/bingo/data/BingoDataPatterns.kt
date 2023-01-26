@@ -1,12 +1,12 @@
 package com.sy.renz.bingo.data
 
 import androidx.room.Entity
-import androidx.room.ForeignKey
-import androidx.room.PrimaryKey
 
 @Entity(tableName = "BingoDataPatterns", primaryKeys = ["bingoDataId", "patternId"]
 )
 data class BingoDataPatterns (
+
+//    @PrimaryKey(autoGenerate = true) val bingoDataPatternsId: Long? = null,
 
     val bingoDataId: Long,
 

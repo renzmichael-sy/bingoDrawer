@@ -1,6 +1,5 @@
 package com.sy.renz.bingo.presentation.ui.pattern_list
 
-import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -25,7 +24,6 @@ import com.sy.renz.bingo.presentation.ui.main_activity.MainActivityEvent
 import com.sy.renz.bingo.presentation.ui.main_bingo.MainViewModel
 import com.sy.renz.bingo.presentation.ui.theme.*
 import com.sy.renz.bingo.util.UiEvent
-import kotlinx.coroutines.flow.collect
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -116,8 +114,6 @@ fun PatternListScreen(
                         }
 
                     }  else {
-
-                        Log.e("Pattern Error", patternList.toString())
                         PatternListItem(
                             index = index,
                             pattern = patternList.value[index - 1],
@@ -219,7 +215,10 @@ fun PatternListScreen(
                 positiveString = "Yes",
                 negativeString = "No",
                 onDismiss = { showDialog = false },
-                onConfirm = { viewModel.onEvent(PatternListScreenEvent.PatternItemDelete(viewModel.selectedPattern!!))}
+                onConfirm = {
+                    showDialog = false
+                    viewModel.onEvent(PatternListScreenEvent.PatternItemDelete(viewModel.selectedPattern!!))
+                }
             )
         }
     }

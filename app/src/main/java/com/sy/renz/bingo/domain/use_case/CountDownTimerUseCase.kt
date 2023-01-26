@@ -1,6 +1,6 @@
 package com.sy.renz.bingo.domain.use_case
 
-import android.os.CountDownTimer
+import com.sy.renz.bingo.data.BingoData
 import com.sy.renz.bingo.data.TimerState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -10,6 +10,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class CountDownTimerUseCase @Inject constructor(
+    private val nextBallUseCase: NextBallUseCase,
     private val timerScope: CoroutineScope
 ) {
 
@@ -18,14 +19,20 @@ class CountDownTimerUseCase @Inject constructor(
 
     private var job: Job? = null
 
-    fun toggleTimer(totalSeconds: Int) {
+    fun toggleTimer(totalSeconds: Int, bingoData: BingoData) {
         job = if(job == null) {
             timerScope.launch {
                 initTimer(totalSeconds)
-                    .onCompletion { _timerStateFlow.emit(TimerState()) }
+                    .onCompletion {
+                        nextBallUseCase(bingoData)
+//                        _timerStateFlow.emit(TimerState())
+                        job?.cancel()
+                        job = null
+                    }
                     .collect{ _timerStateFlow.emit(it)}
             }
         } else{
+            println("JOB IS NOT NULL")
             job?.cancel()
             null
         }

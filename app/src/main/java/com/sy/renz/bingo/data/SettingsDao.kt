@@ -10,6 +10,9 @@ interface SettingsDao {
     @Delete
     suspend fun deleteDefaultSettings(defaultSettings: Settings)
 
+    @Query("SELECT * FROM Settings ORDER BY id DESC LIMIT 1")
+    suspend fun getLatestSettings(): Settings
+
     @Query("SELECT * FROM Settings where id = :id")
     suspend fun getSettingsById(id: Long): Settings
 

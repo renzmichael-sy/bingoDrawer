@@ -12,17 +12,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.stringArrayResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.sy.renz.bingo.R
 import com.sy.renz.bingo.data.Pattern
+import com.sy.renz.bingo.presentation.AutoResizedText
 import com.sy.renz.bingo.presentation.ui.theme.*
 import com.sy.renz.bingo.util.Routes
 import com.sy.renz.bingo.util.UiEvent
+import com.sy.renz.bingo.R
 
 
 @ExperimentalFoundationApi
@@ -37,10 +38,10 @@ fun BingoPattern(pattern: Pattern?) {
         }
     Row(
         modifier = Modifier
-            .border(1.dp, color = darkFont, shape = RoundedCornerShape(20.dp))
+            .border(1.dp, color = darkFont, shape = RoundedCornerShape(20))
             .background(
                 color = bg,
-                shape = RoundedCornerShape(20.dp),
+                shape = RoundedCornerShape(20),
             )
             .fillMaxHeight()
             .aspectRatio(0.8f)
@@ -62,16 +63,17 @@ fun BingoPattern(pattern: Pattern?) {
                 ) {
                     repeat(5) { rowIndex ->
                         if (columnIndex == 0) {
-                            Text(
-                                modifier = Modifier
-                                    .fillMaxHeight()
-                                    .weight(0.2f),
-                                text = stringArrayResource(id = R.array.bingo)[rowIndex],
-                                color = if (patternList.isEmpty()) disabled else colorList[rowIndex],
-                                fontSize = 12.sp,
-                                textAlign = TextAlign.Center,
-                                fontFamily = fredoka
-                            )
+                            Box(
+                                modifier = Modifier.weight(0.2f)
+                            ) {
+                                AutoResizedText(
+                                    modifier = Modifier
+                                        .fillMaxSize(),
+                                    text = stringArrayResource(id = R.array.bingo)[rowIndex],
+                                    color = if (patternList.isEmpty()) disabled else colorList[rowIndex],
+                                    style = TextStyle(fontFamily = fredoka, fontSize = 20.sp, textAlign = TextAlign.Center)
+                                )
+                            }
                         } else {
                             Box(
                                 modifier = Modifier
@@ -92,7 +94,7 @@ fun BingoPattern(pattern: Pattern?) {
                                             fontFamily = fredoka,
                                             fontSize = 6.sp,
                                             color = color_G,
-                                            text = "FREE"
+                                            text = stringResource(R.string.free)
                                         )
                                     }
                                 }
@@ -105,41 +107,3 @@ fun BingoPattern(pattern: Pattern?) {
         }
     }
 }
-//    LazyVerticalGrid(
-//        modifier = Modifier
-//            .background(
-//                color = bg,
-//                shape = RoundedCornerShape(20.dp)
-//            ),
-//        cells = GridCells.Fixed(5),
-//        contentPadding = PaddingValues(vertical = 16.dp, horizontal = 8.dp)
-//    ) {
-//
-//        // +5 to add the header
-//        items(30) { item ->
-//            if(item < 5) {
-//                Text(
-//                    modifier = Modifier.padding(0.dp,0.dp,0.dp,8.dp),
-//                    text = stringArrayResource(id = R.array.bingo)[item],
-//                    color = if(pattern.isEmpty()) disabled else colorList[item % 5],
-//                    fontSize = 10.sp,
-//                    textAlign = TextAlign.Center,
-//                    fontFamily = fredoka
-//                )
-//            }
-//            else {
-//                Box(
-//                    modifier = Modifier
-//                        .fillMaxSize()
-//                        .aspectRatio(1f)
-//                        .padding(2.dp)
-//                        .background(
-//                            if(pattern[item - 5] == 1) colorList[item % 5] else disabled,
-//                            // rounded corner to match with the OutlinedTextField
-//                            shape = RoundedCornerShape(4.dp)
-//                        )
-//                )
-//            }
-//        }
-//    }
-//}

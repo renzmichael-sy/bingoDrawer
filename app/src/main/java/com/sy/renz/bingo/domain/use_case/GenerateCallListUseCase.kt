@@ -3,10 +3,9 @@ package com.sy.renz.bingo.domain.use_case
 import javax.inject.Inject
 
 class GenerateCallListUseCase @Inject constructor(
-    private val insertBingoDataUseCase: InsertBingoDataUseCase
 ) {
 
-    suspend operator fun invoke(callList: String = "",callFrom: String = "1,1,1,1,1", retainCalled: Boolean = false, index: Int = 0): String {
+    operator fun invoke(callList: String = "",callFrom: String = "1,1,1,1,1", retainCalled: Boolean = false, index: Int = 0): String {
 
         var newCallList: MutableList<Int> = ArrayList()
         val b = (1..15).toList()
@@ -14,7 +13,6 @@ class GenerateCallListUseCase @Inject constructor(
         val n = (31..45).toList()
         val g = (46..60).toList()
         val o = (61..75).toList()
-
 
         val callFromList = callFrom.split(",")
 
@@ -25,18 +23,11 @@ class GenerateCallListUseCase @Inject constructor(
         if (callFromList[4] == "1") newCallList.addAll(o)
         newCallList = newCallList.shuffled().toMutableList()
 
-
         if (retainCalled && index != -1) {
             newCallList.addAll(0, callList.split(",").subList(0, index + 1).map { it.toInt() })
-            newCallList.distinct()
+            newCallList = newCallList.distinct() as MutableList<Int>
         }
 
-//        insertBingoDataUseCase()
-
         return newCallList.joinToString(",")
-
-//        println("CallList $callList")
-
-
     }
 }

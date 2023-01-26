@@ -1,24 +1,18 @@
 package com.sy.renz.bingo.domain.use_case
 
+import com.sy.renz.bingo.data.BingoData
 import javax.inject.Inject
 
 class NextBallUseCase @Inject constructor(
-    private val insertBingoDataUseCase: InsertBingoDataUseCase
+    private val insertBingoDataUseCase: InsertBingoDataUseCase,
+    private val textToSpeechUseCase: TextToSpeechUseCase,
+    private val getAnnouncerSpeechUseCase: GetAnnouncerSpeechUseCase
 ) {
-
-    operator fun invoke (index: Int): Int {
-        var currIndex = index
-
-        return if(currIndex < 75) {
-            ++currIndex
-        } else
-            index
-
-
-//        if(index < callList.length) {
-//            val editedIndex =  index + 1
-//            insertBingoDataUseCase()
-//        }
+    suspend operator fun invoke (bingoData: BingoData, isSlowReveal: Boolean = false) {
+        if(bingoData.index < bingoData.drawList.split(",").size) {
+            bingoData.index = bingoData.index + 1
+            insertBingoDataUseCase(bingoData)
+            textToSpeechUseCase.invoke(getAnnouncerSpeechUseCase(bingoData.drawList.split(",")[bingoData.index].toInt()))
+        }
     }
-
 }

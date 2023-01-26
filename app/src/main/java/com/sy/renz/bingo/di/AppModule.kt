@@ -1,15 +1,16 @@
 package com.sy.renz.bingo.di
 
 import android.app.Application
+import android.content.Context
 import androidx.room.Room
-import androidx.room.RoomDatabase
-import com.sy.renz.bingo.data.BingoData
 import com.sy.renz.bingo.data.BingoDatabase
 import com.sy.renz.bingo.data.BingoRepository
 import com.sy.renz.bingo.data.BingoRepositoryImpl
+import com.sy.renz.bingo.domain.use_case.TextToSpeechUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -32,5 +33,10 @@ object AppModule {
     fun providesBingoRepository(db: BingoDatabase): BingoRepository{
         return BingoRepositoryImpl(db.dao, db.bingoDataPatternsDao, db.bingoDataDao, db.defaultSettingsDao)
     }
-    
+
+    @Provides
+    @Singleton
+    fun providesTextToSpeechUseCase(@ApplicationContext context: Context): TextToSpeechUseCase {
+        return TextToSpeechUseCase(context)
+    }
 }

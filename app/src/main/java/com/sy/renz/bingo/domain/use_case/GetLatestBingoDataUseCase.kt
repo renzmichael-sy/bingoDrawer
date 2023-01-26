@@ -2,14 +2,15 @@ package com.sy.renz.bingo.domain.use_case
 
 import com.sy.renz.bingo.data.BingoDataAndPattern
 import com.sy.renz.bingo.data.BingoRepository
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class GetLatestBingoDataUseCase @Inject constructor(
     private val repository: BingoRepository
 ) {
 
-    suspend operator fun invoke(): BingoDataAndPattern?{
-        repository.getLatestBingoData()?.let { result ->
+    operator fun invoke(): Flow<BingoDataAndPattern> {
+        repository.getLatestBingoData().let { result ->
             return result
 //            println("DB DATA: $result")
 //            callList = result.bingoData.drawList
@@ -29,7 +30,5 @@ class GetLatestBingoDataUseCase @Inject constructor(
 //                }
 
         }
-
-        return null
     }
 }

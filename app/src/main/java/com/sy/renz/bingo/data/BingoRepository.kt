@@ -13,9 +13,9 @@ interface BingoRepository {
 
     suspend fun insertBingoData(bingoData: BingoData): Long
 
-    suspend fun getLatestBingoData(): BingoDataAndPattern?
+    fun getLatestBingoData(): Flow<BingoDataAndPattern>
 
-    suspend fun insertBingoDataPattern(bingoDataPatterns: BingoDataPatterns)
+    suspend fun insertBingoDataPattern(bingoDataPatterns: BingoDataPatterns): Long
 
     suspend fun deleteBingoDataPattern(bingoDataPatterns: BingoDataPatterns)
 
@@ -23,11 +23,13 @@ interface BingoRepository {
 
     suspend fun getPatterns(id: Int): List<BingoDataPatterns>?
 
-    fun getData(id: Long): BingoDataAndPattern?
+    fun getData(id: Long): Flow<BingoDataAndPattern>
 
     suspend fun getDefaultSettings(): Settings
 
     suspend fun getSettings(id: Long): Settings
+
+    suspend fun getLatestSettings(): Settings
 
     suspend fun insertSettings(defaultSettings: Settings): Long
 }

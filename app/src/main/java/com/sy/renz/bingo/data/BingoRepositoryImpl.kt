@@ -6,7 +6,7 @@ class BingoRepositoryImpl(
     private val dao: PatternDao,
     private val bingoDataPatternsDao: BingoDataPatternsDao,
     private val bingoDataDao: BingoDataDao,
-    private val defaultSettingsDao: SettingsDao
+    private val settingsDao: SettingsDao
 //    private val bingoDataSettingsDao: BingoDataSettingsDao
 ): BingoRepository {
 
@@ -30,12 +30,12 @@ class BingoRepositoryImpl(
         return bingoDataDao.insertData(bingoData)
     }
 
-    override suspend fun getLatestBingoData(): BingoDataAndPattern? {
+    override fun getLatestBingoData(): Flow<BingoDataAndPattern> {
         return bingoDataDao.getData()
     }
 
-    override suspend fun insertBingoDataPattern(bingoDataPatterns: BingoDataPatterns) {
-        bingoDataPatternsDao.insertBingoDataPattern(bingoDataPatterns)
+    override suspend fun insertBingoDataPattern(bingoDataPatterns: BingoDataPatterns): Long {
+        return bingoDataPatternsDao.insertBingoDataPattern(bingoDataPatterns)
     }
 
     override suspend fun deleteBingoDataPattern(bingoDataPatterns: BingoDataPatterns) {
@@ -50,19 +50,23 @@ class BingoRepositoryImpl(
         TODO("Not yet implemented")
     }
 
-    override fun getData(id: Long): BingoDataAndPattern {
+    override fun getData(id: Long): Flow<BingoDataAndPattern> {
         return bingoDataPatternsDao.getData(id)
     }
 
     override suspend fun getDefaultSettings(): Settings {
-        return defaultSettingsDao.getDefaultSettings()
+        return settingsDao.getDefaultSettings()
     }
 
     override suspend fun getSettings(id: Long): Settings {
-        return defaultSettingsDao.getSettingsById(id)
+        return settingsDao.getSettingsById(id)
+    }
+
+    override suspend fun getLatestSettings(): Settings {
+        return settingsDao.getLatestSettings()
     }
 
     override suspend fun insertSettings(defaultSettings: Settings): Long {
-        return defaultSettingsDao.insertDefaultSettings(defaultSettings)
+        return settingsDao.insertDefaultSettings(defaultSettings)
     }
 }

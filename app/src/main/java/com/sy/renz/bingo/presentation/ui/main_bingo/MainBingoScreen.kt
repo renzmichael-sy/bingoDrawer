@@ -2,98 +2,48 @@
 
 package com.sy.renz.bingo.presentation.ui.main_bingo
 
-import androidx.compose.animation.Animatable
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.animateColor
-import androidx.compose.animation.core.*
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringArrayResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.sy.renz.bingo.R
+import com.sy.renz.bingo.presentation.AdvertView
 import com.sy.renz.bingo.presentation.ui.*
 import com.sy.renz.bingo.presentation.ui.main_activity.MainActivityEvent
 import com.sy.renz.bingo.presentation.ui.theme.*
 import com.sy.renz.bingo.util.UiEvent
 
-
-//    LazyVerticalGrid(cells = GridCells.Fixed(10)) {
-//        items(75) { index ->
-//            BingoNumbers((index + 1),historyList)
-//        }
-//    }
-//    var num = 1
-//    for (i in 0..4) {
-//        Column(
-//            modifier = Modifier
-//                .padding(0.dp, 8.dp, 0.dp, 0.dp),
-//            verticalArrangement = Arrangement.SpaceEvenly,
-//            horizontalAlignment = Alignment.CenterHorizontally
-//        ) {
-//
-//            Text(
-//                text = stringArrayResource(id = R.array.bingo)[i],
-//                color = colorList[i],
-//                fontSize = 48.sp,
-//                textAlign = TextAlign.Center,
-//                fontFamily = fredoka
-//            )
-//            Row(
-//                modifier = Modifier.weight(1f)
-//            ) {
-//                for (j in 0..1) {
-//                    Column(
-//                        modifier = Modifier
-//                            .fillMaxHeight(),
-//                        verticalArrangement = Arrangement.SpaceEvenly
-//                    ) {
-//
-//                        var buttonCount = 6
-//                        if (j % 2 == 0) {
-//                            buttonCount = 7
-//                        }
-//
-//                        for (k in 0..buttonCount) {
-//                            BingoNumbers(num,historyList)
-//                            num++
-//                        }
-//                    }
-//                }
-//
-//                if (i < 4)
-//                    Spacer(modifier = Modifier.width(8.dp))
-//            }
-//        }
-//    }
-//}
-
 @OptIn(ExperimentalFoundationApi::class, ExperimentalAnimationApi::class)
 @Composable
 fun MainBingoScreen (
     onNavigate: (UiEvent.Navigate) -> Unit,
-    viewModel: MainViewModel
+    viewModel: MainViewModel = hiltViewModel()
 )
 {
     var showDialog by remember { mutableStateOf(false)}
     val scaffoldState = rememberScaffoldState()
-//    val callList = if(viewModel.state.value.mainBingoData?.bingoData?.drawList?.isNotBlank() == true) viewModel.state.value.mainBingoData?.bingoData?.drawList?.split(",")
-//        ?.map{ it.toInt() } else emptyList()
+    val drawList = viewModel.drawList.value
+    val index =  viewModel.index.value
+    val pattern = viewModel.pattern.value
+    val slowRevealInt = viewModel.slowRevealSteps.value
+
     LaunchedEffect(key1 = true) {
         viewModel.uiEvent.collect { event ->
             when(event) {
@@ -142,9 +92,7 @@ fun MainBingoScreen (
                     .padding(horizontal = 8.dp),
                 horizontalArrangement = Arrangement.Center
             ){
-                val history = viewModel.state.value.callList.subList(0, viewModel.state.value.index + 1)
-                BingoColumn(callFrom = viewModel.state.value.settings?.callFrom ?: "1,1,1,1,1", historyList = viewModel.state.value.callList.subList(0, viewModel.state.value.index + 1))
-//                BingoColumn(viewModel.state.value.mainBingoData?.bingoData?.drawList?, if(viewModel.index != - 1 && callList.isNotEmpty()) callList.subList(0, viewModel.index + 1) else emptyList())
+                BingoColumn(callFrom = viewModel.settings.value.callFrom, historyList = if(drawList.isNotEmpty())drawList.subList(0, index + 1) else emptyList())
             }
 
             //Bottom Controls and Pattern
@@ -173,24 +121,32 @@ fun MainBingoScreen (
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .fillMaxHeight(0.6f)
-                                .padding(0.dp, 8.dp, 8.dp, 8.dp)
+                                .padding(0.dp,8.dp,8.dp,8.dp)
                                 .background(
                                     color = bg,
-                                    shape = RoundedCornerShape(0.dp, 20.dp, 20.dp, 0.dp),
+                                    shape = RoundedCornerShape(
+                                        topEndPercent = 20,
+                                        topStartPercent = 0,
+                                        bottomEndPercent = 20,
+                                        bottomStartPercent = 0
+                                    ),
                                 )
                                 .padding(8.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            BingoBall(20, 40, if(viewModel.state.value.callList.isNotEmpty() && viewModel.state.value.index != -1) viewModel.state.value.callList[viewModel.state.value.index] else 0)
+                            BingoBall(40, 60, if(drawList.isNotEmpty() && index != -1) drawList[index] else 0, slowRevealInt = slowRevealInt, isSlowRevealAffected = true)
                             Spacer(modifier = Modifier.width(16.dp))
-                            Column(modifier= Modifier.width(IntrinsicSize.Max)) {
+                            Column(
+                                modifier= Modifier
+                                    .fillMaxWidth(0.5f)
+                            ) {
+                                BingoBall(40, 60, if(drawList.isNotEmpty() && index != -1) drawList[if(index > 0)index - 1 else 0] else 0)
                                 Text(
                                     modifier = Modifier.fillMaxWidth(),
-                                    text = "Previous",
+                                    text = viewModel.timerStateFlow.collectAsState().value.secondsRemaining.toString(),
                                     fontFamily= fredoka,
                                     color = Color.White,
                                     textAlign = TextAlign.Center)
-                                BingoBall(18, 32, if(viewModel.state.value.callList.isNotEmpty() && viewModel.state.value.index != -1) viewModel.state.value.callList[if(viewModel.state.value.index > 0)viewModel.state.value.index - 1 else 0] else 0)
                             }
                         }
 
@@ -259,6 +215,7 @@ fun MainBingoScreen (
                                 showBottomText = false
                             )
                         }
+
                     }
 
                     //Current Bingo Pattern
@@ -273,35 +230,28 @@ fun MainBingoScreen (
                                 //TODO
                             }
                     ){
-//                        Text(
-//                            modifier = Modifier.height(IntrinsicSize.Min),
-//                            color = Color.White,
-//                            fontFamily = fredoka,
-//                            fontSize = 16.sp,
-//                            text = "${viewModel.pattern?.name}"
-//                        )
-//                        Spacer(modifier = Modifier.fillMaxWidth().height(8.dp))
                         Box(modifier = Modifier.fillMaxHeight(0.7f)) {
-                            BingoPattern(viewModel.state.value.pattern)
+                            BingoPattern(pattern)
                         }
-//                        Spacer(modifier = Modifier.fillMaxWidth().fillMaxHeight(0.05f))
+
                         TextButton(modifier = Modifier
                             .fillMaxWidth()
                             .height(40.dp)
                             .background(color = color_O, shape = RoundedCornerShape(percent = 20)), onClick = {viewModel.onEvent(MainActivityEvent.PatternListClick)}){
-                            Text(text = "Change", fontFamily = fredoka, color = Color.White)
+                            Text(text = pattern.name, fontFamily = fredoka, color = Color.White)
                         }
                     }
                 }
             }
+            AdvertView()
         }
 
         if(showDialog) {
             CustomAlertDialog(
-                title = "Warning",
-                message = "Are you sure you want to restart?",
-                positiveString = "Yes",
-                negativeString = "No",
+                title = stringResource(R.string.warning),
+                message = stringResource(R.string.restart_confirmation),
+                positiveString = stringResource(R.string.yes),
+                negativeString = stringResource(R.string.no),
                 onDismiss = { showDialog = false },
                 onConfirm = {
                     showDialog = false

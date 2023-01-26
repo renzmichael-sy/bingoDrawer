@@ -1,13 +1,13 @@
 package com.sy.renz.bingo.presentation.ui.settings_screen
 
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.sy.renz.bingo.data.BingoRepository
+import com.sy.renz.bingo.data.BingoData
 import com.sy.renz.bingo.data.Settings
+import com.sy.renz.bingo.domain.use_case.*
 import com.sy.renz.bingo.util.UiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -17,40 +17,57 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SettingsScreenViewModel @Inject constructor(
-    private val bingoRepository: BingoRepository,
+    private val insertSettingsUseCase: InsertSettingsUseCase,
+    private val getBingoDataUseCase: GetBingoDataUseCase,
+    private val generateCallListUseCase: GenerateCallListUseCase,
+    private val insertBingoDataUseCase: InsertBingoDataUseCase,
     savedStateHandle: SavedStateHandle
 ): ViewModel() {
 
     private val _uiEvent = Channel<UiEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
 
-    var settings by mutableStateOf<Settings?>(null)
+    private val _settings = mutableStateOf<Settings?>(null)
+    val settings: State<Settings?> = _settings
 
-    var callFrom by mutableStateOf<String>("1,1,1,1,1")
+    private val _callFrom = mutableStateOf("1,1,1,1,1")
+    val callFrom: State<String> = _callFrom
 
-    var timer by mutableStateOf<Double>( 3.0)
+    private val _timer = mutableStateOf( 3.0)
+    val timer: State<Double> = _timer
 
-    var callType by mutableStateOf<Int> ( 1)
+    private val _callType = mutableStateOf ( 1)
+    val callType : State<Int> = _callType
 
-    var announcerId by mutableStateOf<Long?> (null)
+    private val _announcerId = mutableStateOf<Long?> (null)
+    val announcerId: State<Long?> = _announcerId
 
-    var animationDrawSpeed by mutableStateOf<Double> (2.5)
+    private val _announcementType = mutableStateOf("1,2,3")
+    val announcementType: State<String> = _announcementType
 
+    private val _animationDrawSpeed = mutableStateOf (2.5)
+    val animationDrawSpeed : State<Double> = _animationDrawSpeed
+
+    private val _isSlowReveal = mutableStateOf(0)
+    val isSlowReveal: State<Int> = _isSlowReveal
+
+    private val _bingoData = mutableStateOf(BingoData())
 
 
     init{
-        val settingsId =  savedStateHandle.get<Long>("settingsId")!!
-        println("Settings ViewModel INIT $settingsId")
+        val bingoDataId = savedStateHandle.get<Long>("bingoDataId")!!
+        if(bingoDataId != -1L) {
+            viewModelScope.launch {
+                getBingoDataUseCase(bingoDataId).collect {
+                    val settings = it.settings
+                    _callFrom.value = settings!!.callFrom
+                    _callType.value = settings.callType
+                    _animationDrawSpeed.value = settings.animationDrawSpeed
+                    _announcerId.value = settings.announcerId
+                    _timer.value = settings.timer
+                    this@SettingsScreenViewModel._settings.value = settings
 
-        if(settingsId != -1L) {
-            viewModelScope.launch{
-                bingoRepository.getSettings(settingsId).let {
-                    callFrom  = it.callFrom
-                    callType = it.callType
-                    animationDrawSpeed = it.animationDrawSpeed
-                    announcerId = it.announcerId
-                    timer = it.timer
-                    this@SettingsScreenViewModel.settings = it
+                    _bingoData.value = it.bingoData
                 }
             }
         }
@@ -59,24 +76,43 @@ class SettingsScreenViewModel @Inject constructor(
     fun onEvent(event: SettingsScreenEvent) {
         when(event) {
             is SettingsScreenEvent.CallTypeEdited -> {
-                callType = event.callType
+                _callType.value = event.callType
+                insertSettings()
             }
             is SettingsScreenEvent.AnimationDrawSpeed -> TODO()
             is SettingsScreenEvent.CallFromEdited -> {
-                val mutableCallFrom = callFrom.split(",").toMutableList()
+                val mutableCallFrom = _callFrom.value.split(",").toMutableList()
                 mutableCallFrom[event.index] = if(mutableCallFrom[event.index] == "1") "0" else "1"
-                callFrom = mutableCallFrom.joinToString(",")
-//                insertSettings()
-//                generateCallList(true)
+                _callFrom.value = mutableCallFrom.joinToString(",")
+                insertSettings()
+
+                viewModelScope.launch {
+                    _bingoData.value = _bingoData.value.copy(drawList = generateCallListUseCase(
+                        callList = _bingoData.value.drawList,
+                        callFrom = _callFrom.value,
+                        retainCalled = true,
+                        index = _bingoData.value.index
+                    ))
+                    insertBingoDataUseCase(_bingoData.value)
+                }
             }
             is SettingsScreenEvent.TimerEdited -> {
-                timer = event.timer
+                _timer.value = event.timer
+                insertSettings()
             }
             is SettingsScreenEvent.SaveClicked -> {
                 viewModelScope.launch {
-                    bingoRepository.insertSettings(Settings(settings!!.id,callFrom,timer,callType,announcerId,animationDrawSpeed))
+
                     sendUIEvent(UiEvent.PopBackStack)
                 }
+            }
+            is SettingsScreenEvent.AnnouncementTypeEdited -> {
+                _announcementType.value = event.type
+                insertSettings()
+            }
+            is SettingsScreenEvent.SlowRevealEdited -> {
+                _isSlowReveal.value = if(event.toggle) 1 else 0
+                insertSettings()
             }
         }
     }
@@ -84,6 +120,23 @@ class SettingsScreenViewModel @Inject constructor(
     private fun sendUIEvent(event: UiEvent) {
         viewModelScope.launch {
             _uiEvent.send(event)
+        }
+    }
+
+    private fun insertSettings(){
+        viewModelScope.launch {
+            insertSettingsUseCase(
+                Settings(
+                    _settings.value?.id,
+                    _callFrom.value,
+                    _timer.value,
+                    _callType.value,
+                    _announcerId.value,
+                    _announcementType.value,
+                    _animationDrawSpeed.value,
+                    isSlowReveal = _isSlowReveal.value
+                )
+            )
         }
     }
 
