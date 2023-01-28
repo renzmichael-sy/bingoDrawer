@@ -1,7 +1,7 @@
 package com.sy.renz.bingo.domain.use_case
 
 import com.sy.renz.bingo.data.BingoDataPatterns
-import com.sy.renz.bingo.data.BingoRepository
+import com.sy.renz.bingo.domain.repository.BingoRepository
 import javax.inject.Inject
 
 class InsertBingoDataPatternUseCase @Inject constructor(

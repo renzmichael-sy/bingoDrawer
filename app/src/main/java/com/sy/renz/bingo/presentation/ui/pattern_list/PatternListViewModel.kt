@@ -5,7 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.sy.renz.bingo.data.BingoRepository
+import com.sy.renz.bingo.domain.repository.BingoRepository
 import com.sy.renz.bingo.data.Pattern
 import com.sy.renz.bingo.util.Routes
 import com.sy.renz.bingo.util.UiEvent
@@ -18,7 +18,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PatternListViewModel @Inject constructor(
-        private val bingoRepository: BingoRepository,
+    private val bingoRepository: BingoRepository,
 //        private val savedStateHandle: SavedStateHandle
     ): ViewModel(){
 

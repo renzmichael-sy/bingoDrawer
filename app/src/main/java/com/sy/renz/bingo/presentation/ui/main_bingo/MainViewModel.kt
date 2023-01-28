@@ -34,8 +34,8 @@ class MainViewModel @Inject constructor(
     private val _uiEvent = Channel<UiEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
 
-//    private val _state = mutableStateOf(MainBingoState())
-//    val state: State<MainBingoState> = _state
+    private val _state = mutableStateOf(MainBingoState())
+    val state: State<MainBingoState> = _state
 
     private var _drawList = mutableStateOf<List<Int>>(emptyList())
     val drawList: State<List<Int>> = _drawList
@@ -79,6 +79,7 @@ class MainViewModel @Inject constructor(
                             when(_slowRevealSteps.value) {
                                 0 -> {
                                     _slowRevealSteps.value = 1
+                                    textToSpeechUseCase
                                 }
 
                                 else -> {
@@ -91,11 +92,10 @@ class MainViewModel @Inject constructor(
                             nextBallUseCase(convertBingoData())
                         }
                     } else {
-                        timerIntent.toggleTimer(_settings.value.timer.toInt(), convertBingoData()).run {
-                            println("THIS")
-                        }
+                        println("TOGGLED TIMER ON VM")
+                        _state.value = _state.value.copy(isDrawing = !_state.value.isDrawing)
+                        timerIntent.toggleTimer(_settings.value.timer.toInt(), convertBingoData())
                     }
-
                 }
             }
 

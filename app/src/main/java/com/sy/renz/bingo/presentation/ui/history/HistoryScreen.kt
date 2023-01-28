@@ -1,5 +1,6 @@
 package com.sy.renz.bingo.presentation.ui.history
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -10,6 +11,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.BlendMode.Companion.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -65,7 +67,7 @@ fun HistoryScreen(
             )
         },
         content = {
-            MyLazyColumn(history = history, modifier = Modifier.padding(it))
+            MyLazyColumn(history = history, modifier = Modifier.padding(it).background(androidx.compose.ui.graphics.Color.Transparent))
         }
     ) 
 }

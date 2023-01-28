@@ -20,6 +20,9 @@
     <string name="add_new_pattern">Add New Pattern</string>
     <string name="save">Save</string>
     <string name="pattern_name">Pattern Name</string>
+    <string name="next_ball">Next Ball</string>
+    <string name="settings">Settings</string>
+    <string name="slow_reveal">Slow Reveal</string>
 
     <string-array name="bingo">
         <item>B</item>

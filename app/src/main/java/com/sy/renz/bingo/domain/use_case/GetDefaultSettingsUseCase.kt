@@ -1,11 +1,11 @@
 package com.sy.renz.bingo.domain.use_case
 
-import com.sy.renz.bingo.data.BingoRepository
+import com.sy.renz.bingo.domain.repository.BingoRepository
 import com.sy.renz.bingo.data.Settings
 import javax.inject.Inject
 
 class GetDefaultSettingsUseCase @Inject constructor(
-    private val repository:BingoRepository
+    private val repository: BingoRepository
 ){
 
     suspend operator fun invoke(): Settings {

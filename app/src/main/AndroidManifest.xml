@@ -15,7 +15,8 @@
         <activity
             android:name=".presentation.ui.main_activity.MainActivity"
             android:exported="true"
-            android:theme="@style/Theme.Bingo">
+            android:theme="@style/Theme.Bingo"
+            android:screenOrientation="fullSensor">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

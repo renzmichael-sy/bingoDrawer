@@ -1,10 +1,12 @@
 package com.sy.renz.bingo.domain.use_case
 
 import com.sy.renz.bingo.data.*
+import com.sy.renz.bingo.domain.repository.BingoRepository
 import javax.inject.Inject
 
 class InsertBingoDataUseCase @Inject constructor(
-    private val repository: BingoRepository) {
+    private val repository: BingoRepository
+) {
 
     suspend operator fun invoke(bingoData: BingoData) {
 //            settingsId = repository.insertSettings(this@MainViewModel.settings!!)

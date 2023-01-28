@@ -62,7 +62,7 @@ fun SettingsScreen (
                         modifier = Modifier
                             .fillMaxWidth(),
                         textAlign = TextAlign.Center,
-                        text = "Call History", fontFamily = fredoka)
+                        text = stringResource(R.string.settings), fontFamily = fredoka)
                 },
                 navigationIcon = {
                     IconButton(onClick = { onPopBackStack() }) {
@@ -97,61 +97,100 @@ fun SettingsScreen (
                         startY = 150f
                     )
                 )
-                .padding(it),
+                .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Text(text = stringResource(R.string.call_settings), style = Typography.h1)
+            Text(text = stringResource(R.string.call_settings), style = Typography.h4)
 
-            Column(modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight(0.2f)
-                .background(color = bg, shape = RoundedCornerShape(percent = 20))
-                .padding(16.dp)) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(0.2f)
+                    .background(color = bg, shape = RoundedCornerShape(percent = 20))
+                    .padding(16.dp)
+            ) {
                 Text(text = stringResource(R.string.call_type))
-                Row(modifier = Modifier.fillMaxSize()) {
+                Row(modifier = Modifier.fillMaxSize(),
+                horizontalArrangement = Arrangement.Center) {
                     Button(
                         onClick = { viewModel.onEvent(SettingsScreenEvent.CallTypeEdited(0)) },
-                        shape = RoundedCornerShape(topStartPercent = 50, topEndPercent = 0, bottomEndPercent = 0, bottomStartPercent = 25),
-                        colors = ButtonDefaults.buttonColors(backgroundColor = if(callType == 0) color_G else disabled, contentColor = Color.White)
+                        shape = RoundedCornerShape(
+                            topStartPercent = 50,
+                            topEndPercent = 0,
+                            bottomEndPercent = 0,
+                            bottomStartPercent = 25
+                        ),
+                        colors = ButtonDefaults.buttonColors(
+                            backgroundColor = if (callType == 0) color_G else disabled,
+                            contentColor = Color.White
+                        )
                     ) {
                         Text(text = stringResource(R.string.continuous))
                     }
                     Button(
                         onClick = { viewModel.onEvent(SettingsScreenEvent.CallTypeEdited(1)) },
-                        shape = RoundedCornerShape(topStartPercent = 0, topEndPercent = 25, bottomEndPercent = 50, bottomStartPercent = 0),
-                        colors = ButtonDefaults.buttonColors(backgroundColor =if (callType == 1) color_G else disabled, contentColor = Color.White)
+                        shape = RoundedCornerShape(
+                            topStartPercent = 0,
+                            topEndPercent = 25,
+                            bottomEndPercent = 50,
+                            bottomStartPercent = 0
+                        ),
+                        colors = ButtonDefaults.buttonColors(
+                            backgroundColor = if (callType == 1) color_G else disabled,
+                            contentColor = Color.White
+                        )
                     ) {
                         Text(text = stringResource(R.string.intermittent))
                     }
                 }
             }
 
-            Column(modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight(0.2f)
-                .background(color = bg, shape = RoundedCornerShape(percent = 20))
-                .padding(16.dp)) {
-                Text(stringResource(R.string.call_timer))
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(0.2f)
+            ) {
 
-                Row(modifier = Modifier.fillMaxSize()){
-                    Button(onClick = {
-                        viewModel.onEvent(SettingsScreenEvent.TimerEdited(timer - 1))
-                    }){
-                        Text(text= stringResource(R.string.minus))
-                    }
-                    Text(modifier = Modifier.fillMaxHeight(), fontFamily = fredoka, fontSize = 16.sp, text = timer.toString())
+                Column(modifier = Modifier
+                    .fillMaxWidth(0.45f)
+                    .fillMaxHeight()
+                    .background(color = bg, shape = RoundedCornerShape(percent = 20))
+                    .padding(16.dp)) {
+                    Text(stringResource(R.string.call_timer))
 
-                    Button(onClick = {
-                        viewModel.onEvent(SettingsScreenEvent.TimerEdited(timer + 1))
-                    }){
-                        Text(text= stringResource(R.string.plus))
+                    Row(modifier = Modifier.fillMaxSize()){
+                        Button(onClick = {
+                            viewModel.onEvent(SettingsScreenEvent.TimerEdited(timer - 1))
+                        }){
+                            Text(text= stringResource(R.string.minus))
+                        }
+                        Text(modifier = Modifier.fillMaxHeight(), fontFamily = fredoka, fontSize = 16.sp, text = timer.toString())
+
+                        Button(onClick = {
+                            viewModel.onEvent(SettingsScreenEvent.TimerEdited(timer + 1))
+                        }){
+                            Text(text= stringResource(R.string.plus))
+                        }
                     }
+
+
                 }
 
+                Spacer(modifier = Modifier.fillMaxWidth(0.1f))
 
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight()
+                        .background(color = bg, shape = RoundedCornerShape(percent = 20))
+                        .padding(16.dp)
+                ) {
+                    Text(text = stringResource(R.string.slow_reveal))
+                    Switch(checked = isSlowReveal == 1, onCheckedChange = {
+                        viewModel.onEvent(SettingsScreenEvent.SlowRevealEdited(it))
+                    })
+                }
             }
-
-            //TextField(value = 1, onValueChange = )
 
             Column(modifier = Modifier
                 .fillMaxWidth()
@@ -159,11 +198,11 @@ fun SettingsScreen (
                 .background(color = bg, shape = RoundedCornerShape(percent = 20))
                 .padding(16.dp)) {
                 Text(stringResource(R.string.call_balls_from))
-                Row(modifier = Modifier.fillMaxSize(),horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                Row(modifier = Modifier.fillMaxSize(),horizontalArrangement = Arrangement.Center) {
                     repeat(5) { index ->
                         OutlinedButton(
                             modifier = Modifier
-                                .fillMaxHeight(0.8f)
+                                .fillMaxHeight()
                                 .aspectRatio(1f),
                             onClick = {
                                 viewModel.onEvent(SettingsScreenEvent.CallFromEdited(index))
@@ -197,9 +236,7 @@ fun SettingsScreen (
                     .padding(it),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                Switch(checked = isSlowReveal == 1, onCheckedChange = {
-                    viewModel.onEvent(SettingsScreenEvent.SlowRevealEdited(it))
-                })
+
             }
         }
 

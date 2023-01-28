@@ -5,7 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.sy.renz.bingo.data.BingoRepository
+import com.sy.renz.bingo.domain.repository.BingoRepository
 import com.sy.renz.bingo.data.Pattern
 import com.sy.renz.bingo.util.UiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel

@@ -1,5 +1,6 @@
-package com.sy.renz.bingo.data
+package com.sy.renz.bingo.domain.repository
 
+import com.sy.renz.bingo.data.*
 import kotlinx.coroutines.flow.Flow
 
 interface BingoRepository {

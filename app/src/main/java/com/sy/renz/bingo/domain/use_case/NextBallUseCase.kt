@@ -12,7 +12,7 @@ class NextBallUseCase @Inject constructor(
         if(bingoData.index < bingoData.drawList.split(",").size) {
             bingoData.index = bingoData.index + 1
             insertBingoDataUseCase(bingoData)
-            textToSpeechUseCase.invoke(getAnnouncerSpeechUseCase(bingoData.drawList.split(",")[bingoData.index].toInt()))
+            textToSpeechUseCase(getAnnouncerSpeechUseCase(bingoData.drawList.split(",")[bingoData.index].toInt()))
         }
     }
 }

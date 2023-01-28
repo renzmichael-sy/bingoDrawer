@@ -1,7 +1,7 @@
 package com.sy.renz.bingo.domain.use_case
 
 import com.sy.renz.bingo.data.BingoDataAndPattern
-import com.sy.renz.bingo.data.BingoRepository
+import com.sy.renz.bingo.domain.repository.BingoRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 

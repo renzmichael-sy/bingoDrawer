@@ -4,8 +4,8 @@ import android.app.Application
 import android.content.Context
 import androidx.room.Room
 import com.sy.renz.bingo.data.BingoDatabase
-import com.sy.renz.bingo.data.BingoRepository
-import com.sy.renz.bingo.data.BingoRepositoryImpl
+import com.sy.renz.bingo.domain.repository.BingoRepository
+import com.sy.renz.bingo.domain.repository.BingoRepositoryImpl
 import com.sy.renz.bingo.domain.use_case.TextToSpeechUseCase
 import dagger.Module
 import dagger.Provides
@@ -30,7 +30,7 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun providesBingoRepository(db: BingoDatabase): BingoRepository{
+    fun providesBingoRepository(db: BingoDatabase): BingoRepository {
         return BingoRepositoryImpl(db.dao, db.bingoDataPatternsDao, db.bingoDataDao, db.defaultSettingsDao)
     }
 

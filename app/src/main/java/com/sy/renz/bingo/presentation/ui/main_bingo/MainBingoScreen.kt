@@ -10,10 +10,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.List
-import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,10 +22,12 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.sy.renz.bingo.R
 import com.sy.renz.bingo.presentation.AdvertView
+import com.sy.renz.bingo.presentation.AutoResizedText
 import com.sy.renz.bingo.presentation.ui.*
 import com.sy.renz.bingo.presentation.ui.main_activity.MainActivityEvent
 import com.sy.renz.bingo.presentation.ui.theme.*
 import com.sy.renz.bingo.util.UiEvent
+import java.time.format.TextStyle
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalAnimationApi::class)
 @Composable
@@ -43,6 +42,7 @@ fun MainBingoScreen (
     val index =  viewModel.index.value
     val pattern = viewModel.pattern.value
     val slowRevealInt = viewModel.slowRevealSteps.value
+    val drawType = viewModel.settings.value.callType
 
     LaunchedEffect(key1 = true) {
         viewModel.uiEvent.collect { event ->
@@ -132,23 +132,38 @@ fun MainBingoScreen (
                                     ),
                                 )
                                 .padding(8.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            BingoBall(40, 60, if(drawList.isNotEmpty() && index != -1) drawList[index] else 0, slowRevealInt = slowRevealInt, isSlowRevealAffected = true)
-                            Spacer(modifier = Modifier.width(16.dp))
-                            Column(
-                                modifier= Modifier
-                                    .fillMaxWidth(0.5f)
-                            ) {
-                                BingoBall(40, 60, if(drawList.isNotEmpty() && index != -1) drawList[if(index > 0)index - 1 else 0] else 0)
-                                Text(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    text = viewModel.timerStateFlow.collectAsState().value.secondsRemaining.toString(),
-                                    fontFamily= fredoka,
+                            verticalAlignment = Alignment.CenterVertically,
+                        ){
+                            if(index == -1) {
+                                AutoResizedText(
+                                    modifier = Modifier.fillMaxHeight(0.5f),
+                                    text = "Let's Play Bingo!",
+                                    style = androidx.compose.ui.text.TextStyle(
+                                        textAlign = TextAlign.Center,
+                                        fontFamily = fredoka,
+                                        fontSize = MaterialTheme.typography.h4.fontSize
+                                    ),
                                     color = Color.White,
-                                    textAlign = TextAlign.Center)
+                                )
+                            }
+                            else{
+                                BingoBall(40, 60, if(drawList.isNotEmpty()) drawList[index] else 0, slowRevealInt = slowRevealInt, isSlowRevealAffected = true)
+                                Spacer(modifier = Modifier.width(16.dp))
+                                Column(
+                                    modifier= Modifier
+                                        .fillMaxWidth(0.5f)
+                                ) {
+                                    BingoBall(40, 60, if(drawList.isNotEmpty()) drawList[if(index > 0)index - 1 else 0] else 0)
+                                    Text(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        text = viewModel.timerStateFlow.collectAsState().value.secondsRemaining.toString(),
+                                        fontFamily= fredoka,
+                                        color = Color.White,
+                                        textAlign = TextAlign.Center)
+                                }
                             }
                         }
+
 
                         //Controls (Next Ball, Settings, History, Reset)
                         Row(modifier = Modifier
@@ -160,7 +175,8 @@ fun MainBingoScreen (
                         ){
                             Box(contentAlignment = Alignment.Center, modifier= Modifier
                                 .wrapContentHeight()
-                                .aspectRatio(1f)) {
+                                .aspectRatio(1f)
+                            ) {
                                 CircularProgressIndicator(
                                     color= Color.Yellow,
                                     modifier = Modifier
@@ -175,17 +191,17 @@ fun MainBingoScreen (
                                         .aspectRatio(1f)
                                         .padding(0.dp),
                                     buttonColors = ButtonDefaults.outlinedButtonColors(contentColor = Color.White, backgroundColor = color_O),
-                                    buttonText = "Next Ball",
-                                    buttonIcon = Icons.Filled.PlayArrow,
+                                    buttonText = stringResource(R.string.next_ball),
+                                    buttonIcon = if(drawType == 0) if(!viewModel.state.value.isDrawing)Icons.Filled.PlayArrow else Icons.Filled.Add else null,
                                     onClick = {viewModel.onEvent(MainActivityEvent.NextBall)},
-                                    showBottomText = false
+                                    showBottomText = false,
+                                    enabled = index < (drawList.size - 1)
                                 )
                             }
 
                             CustomButton(
                                 modifier = Modifier
-                                    .aspectRatio(1f)
-                                    .padding(8.dp),
+                                    .aspectRatio(1f),
                                 buttonColors = ButtonDefaults.outlinedButtonColors(contentColor = Color.White, backgroundColor = color_G),
                                 buttonText = "Settings",
                                 buttonIcon = Icons.Filled.Settings,
@@ -195,19 +211,18 @@ fun MainBingoScreen (
 
                             CustomButton(
                                 modifier = Modifier
-                                    .aspectRatio(1f)
-                                    .padding(8.dp),
+                                    .aspectRatio(1f),
                                 buttonColors = ButtonDefaults.outlinedButtonColors(contentColor = Color.White, backgroundColor = color_G),
                                 buttonText = "Call History",
                                 buttonIcon = Icons.Filled.List,
                                 onClick = {viewModel.onEvent(MainActivityEvent.HistoryClick)},
-                                showBottomText = false
+                                showBottomText = false,
+                                enabled = index > 0
                             )
 
                             CustomButton(
                                 modifier = Modifier
-                                    .aspectRatio(1f)
-                                    .padding(8.dp),
+                                    .aspectRatio(1f),
                                 buttonColors = ButtonDefaults.outlinedButtonColors(contentColor = Color.White, backgroundColor = color_G),
                                 buttonText = "Restart",
                                 buttonIcon = Icons.Filled.Refresh,
