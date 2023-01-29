@@ -258,7 +258,6 @@ fun MainBingoScreen (
                     }
                 }
             }
-            AdvertView()
         }
 
         if(showDialog) {
